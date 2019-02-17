@@ -1,0 +1,34 @@
+<div style="margin-top:50px; margin-bottom:50px;">
+  <h5>Record History</h5>
+  <div>
+    <form class="form-inline">
+      <div class="form-group">
+        <input [(ngModel)]="emailAddress" type="email" class="form-control" id="emailInp" name="emailInp" placeholder="Email address">
+      </div>
+      <button (click)="search();" [disabled] = "isLoading" type="submit" class="btn btn-primary" style="margin-left:15px;">Search</button>
+    </form>
+  </div>
+
+  <div *ngIf="hasRecords()" style="margin-top:30px;">
+    <table class="table table-sm" style="max-width=500px!important;">
+      <thead>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of records">
+          <td>{{record.startDateTime | date:'dd.MM.yyyy HH:mm' : 'UTC' }}</td>
+          <td>{{record.endDateTime | date:'dd.MM.yyyy HH:mm' : 'UTC'}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button *ngIf="hasMore" [disabled] = "isLoading" (click)="loadMore();" type="submit" class="btn btn-outline-dark btn-sm">Load more...</button>
+  </div>
+
+  <div *ngIf="isLoading" class="spinner-border" role="status" style="margin-top:30px;">
+    <span class="sr-only">Loading...</span>
+  </div>
+
+</div>
