@@ -98,13 +98,9 @@ public class LegacyServiceImpl implements LegacyService {
                 .build()
                 .toString();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpHeaders headers = createHeadersForPostRequest();
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("email", legacyRecord.getEmail());
-        map.add("start", legacyRecord.getStart());
-        map.add("end", legacyRecord.getEnd());
+        MultiValueMap<String, String> map = createMultiValueMapForPostRequest(legacyRecord);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<MultiValueMap<String, String>>(map,
                 headers);
@@ -113,6 +109,20 @@ public class LegacyServiceImpl implements LegacyService {
                 requestEntity, LegacyRecord.class).getBody();
 
         return convertFromLegacyRecord(legacyRecord);
+    }
+
+    private MultiValueMap<String, String> createMultiValueMapForPostRequest(LegacyRecord legacyRecord) {
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add(TimeTrackerConstants.PARAM_EMAIL, legacyRecord.getEmail());
+        map.add(TimeTrackerConstants.PARAM_START, legacyRecord.getStart());
+        map.add(TimeTrackerConstants.PARAM_END, legacyRecord.getEnd());
+        return map;
+    }
+
+    private HttpHeaders createHeadersForPostRequest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        return headers;
     }
 
     private TimeTrackRecord convertFromLegacyRecord(LegacyRecord legacyRecord) {
