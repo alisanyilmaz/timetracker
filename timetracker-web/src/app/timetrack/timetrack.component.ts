@@ -21,6 +21,12 @@ export class TimetrackComponent implements OnInit {
   }
 
   create() {
+    if(this.emailAddress == '' || this.startDate == '' || this.startTime == '' ||
+        this.endDate == '' || this.endTime == '') {
+      window.alert("Parameters cannot be empty!");
+      return;
+    }
+
     this.isLoading = true;
 
     let newTimeTrackRecord = {
