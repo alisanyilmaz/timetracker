@@ -2,6 +2,7 @@ package com.ayilmaz.timetracker.timetrackerbff.controller;
 
 import com.ayilmaz.timetracker.timetrackerbff.model.TimeTrackRecord;
 import com.ayilmaz.timetracker.timetrackerbff.service.LegacyService;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class TimeTrackRecordsController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public TimeTrackRecord postTimeTrackRecord(@RequestBody @Valid TimeTrackRecord timeTrackRecord) {
 
         return legacyService.postTimeTrackRecord(timeTrackRecord);
