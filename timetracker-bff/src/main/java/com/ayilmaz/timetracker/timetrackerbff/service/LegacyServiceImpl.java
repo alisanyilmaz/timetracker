@@ -34,7 +34,7 @@ public class LegacyServiceImpl implements LegacyService {
     private final DateTimeFormatter toLegacyFormatter;
     private final DateTimeFormatter fromLegacyFormatter;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     private final static String PATH_RECORDS = "records";
 
@@ -68,9 +68,11 @@ public class LegacyServiceImpl implements LegacyService {
         }
     }
 
-    public LegacyServiceImpl(@Value("${legacyservice.dateformat.from}") String legacyDateTimeFormatFrom,
+    public LegacyServiceImpl(RestTemplate restTemplate,
+                             @Value("${legacyservice.dateformat.from}") String legacyDateTimeFormatFrom,
                              @Value("${legacyservice.dateformat.to}") String legacyDateTimeFormatTo) {
 
+        this.restTemplate = restTemplate;
         fromLegacyFormatter = DateTimeFormatter.ofPattern(legacyDateTimeFormatFrom);
         toLegacyFormatter = DateTimeFormatter.ofPattern(legacyDateTimeFormatTo);
     }
