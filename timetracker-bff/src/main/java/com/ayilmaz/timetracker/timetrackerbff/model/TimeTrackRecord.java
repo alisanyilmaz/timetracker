@@ -3,6 +3,7 @@ package com.ayilmaz.timetracker.timetrackerbff.model;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 
 public class TimeTrackRecord {
     @Email
@@ -36,5 +37,21 @@ public class TimeTrackRecord {
 
     public void setEndDateTime(OffsetDateTime endDateTime) {
         this.endDateTime = endDateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimeTrackRecord that = (TimeTrackRecord) o;
+        return Objects.equals(email, that.email) &&
+                Objects.equals(startDateTime, that.startDateTime) &&
+                Objects.equals(endDateTime, that.endDateTime);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(email, startDateTime, endDateTime);
     }
 }
