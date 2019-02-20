@@ -2,6 +2,8 @@ package com.ayilmaz.timetracker.timetrackerbff.service;
 
 import com.ayilmaz.timetracker.timetrackerbff.TimeTrackerConstants;
 import com.ayilmaz.timetracker.timetrackerbff.model.TimeTrackRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class LegacyServiceImpl implements LegacyService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(LegacyServiceImpl.class.getName());
 
     @Value("${LEGACY_SERVICE_URL}")
     private String LEGACY_SERVICE_URL;
@@ -31,7 +36,7 @@ public class LegacyServiceImpl implements LegacyService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private final String PATH_RECORDS = "records";
+    private final static String PATH_RECORDS = "records";
 
     private static class LegacyRecord {
         private String email;
@@ -72,6 +77,7 @@ public class LegacyServiceImpl implements LegacyService {
 
     @Override
     public List<TimeTrackRecord> getTimeTrackRecords(String email, int offset, int length) {
+
         String requestUri = UriComponentsBuilder.fromHttpUrl(LEGACY_SERVICE_URL)
                 .path(PATH_RECORDS)
                 .queryParam(TimeTrackerConstants.PARAM_EMAIL, email)
@@ -79,6 +85,9 @@ public class LegacyServiceImpl implements LegacyService {
                 .queryParam(TimeTrackerConstants.PARAM_LENGTH, length)
                 .build()
                 .toString();
+
+        // sensitive info should be hidden in a real-world app
+        LOGGER.info("Legacy service URL call [GET]: " + requestUri);
 
         LegacyRecord[] legacyRecords = restTemplate.exchange(requestUri, HttpMethod.GET, HttpEntity.EMPTY,
                 LegacyRecord[].class).getBody();
@@ -97,6 +106,9 @@ public class LegacyServiceImpl implements LegacyService {
                 .path(PATH_RECORDS)
                 .build()
                 .toString();
+
+        // sensitive info should be hidden in a real-world app
+        LOGGER.info("Legacy service URL call [POST]: " + requestUri);
 
         HttpHeaders headers = createHeadersForPostRequest();
 
@@ -139,8 +151,11 @@ public class LegacyServiceImpl implements LegacyService {
         LegacyRecord legacyRecord = new LegacyRecord();
 
         legacyRecord.setEmail(record.getEmail());
-        legacyRecord.setStart(record.getStartDateTime().format(toLegacyFormatter));
-        legacyRecord.setEnd(record.getEndDateTime().format(toLegacyFormatter));
+        legacyRecord.setStart(record.getStartDateTime()
+                .withOffsetSameInstant(ZoneOffset.UTC)
+                .format(toLegacyFormatter));
+
+        legacyRecord.setEnd(record.getEndDateTime().withOffsetSameInstant(ZoneOffset.UTC).format(toLegacyFormatter));
 
         return legacyRecord;
     }
