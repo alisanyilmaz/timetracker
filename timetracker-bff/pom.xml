@@ -18,8 +18,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <docker.image.prefix>timetracker</docker.image.prefix>
-        <application.main.classname>com.ayilmaz.timetracker.timetrackerbff.TimetrackerBffApplication
-        </application.main.classname>
     </properties>
 
     <dependencies>
@@ -101,9 +99,6 @@
                             <contextDirectory>${basedir}</contextDirectory>
                             <repository>${docker.image.prefix}/${project.artifactId}</repository>
                             <tag>${project.version}</tag>
-                            <buildArgs>
-                                <MAIN_CLASS_NAME>${application.main.classname}</MAIN_CLASS_NAME>
-                            </buildArgs>
                         </configuration>
                     </execution>
                 </executions>
