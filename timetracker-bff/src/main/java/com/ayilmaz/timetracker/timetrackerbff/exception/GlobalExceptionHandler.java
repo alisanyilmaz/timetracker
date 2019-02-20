@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handleException(MissingServletRequestParameterException ex) {
+        LOGGER.debug(ex.getMessage(), ex);
 
         return createResponse(ex.getMessage());
     }
@@ -37,6 +39,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handleException(ConstraintViolationException ex) {
+        LOGGER.debug(ex.getMessage(), ex);
 
         return createResponse(ex.getMessage());
     }
@@ -45,13 +48,25 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handleException(MethodArgumentNotValidException ex) {
-
+        LOGGER.debug(ex.getMessage(), ex);
+        
         List<String> errors = ex.getBindingResult().getFieldErrors()
                 .stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.toList());
 
         return createResponse(errors);
+    }
+
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map handleException(HttpClientErrorException.BadRequest ex) {
+
+        LOGGER.error(ex.getMessage(), ex);
+
+        // In a real-world application, a better logic can be implemented for generating error messages
+        return createResponse("Bad Request!");
     }
 
     @ExceptionHandler
