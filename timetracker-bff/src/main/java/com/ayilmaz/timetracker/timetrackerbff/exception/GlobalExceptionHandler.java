@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map handleException(MethodArgumentNotValidException ex) {
         LOGGER.debug(ex.getMessage(), ex);
-        
+
         List<String> errors = ex.getBindingResult().getFieldErrors()
                 .stream()
                 .map(FieldError::getDefaultMessage)
